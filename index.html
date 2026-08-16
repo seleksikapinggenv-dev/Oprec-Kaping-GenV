@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulir Oprec Kaping GenV</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center text-slate-800 mb-6">Formulir Pendaftaran Kaping GenV</h2>
+    
+    <form id="oprecForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">NIM / ID Pendaftar</label>
+        <input type="text" id="id" name="ID" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+        <input type="text" id="nama" name="Nama" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Divisi / Peran yang Dipilih</label>
+        <input type="text" id="peran" name="Peran" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+      </div>
+      
+      <button type="submit" id="btnSubmit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition font-semibold">
+        Kirim Pendaftaran
+      </button>
+    </form>
+
+    <div id="statusMessage" class="mt-4 text-center text-sm hidden font-medium"></div>
+  </div>
+
+  <script>
+    // ⚠️ GANTI URL INI DENGAN URL WEB APP DEPLOYMENT DARI GOOGLE APPS SCRIPT ANDA
+    const SCRIPT_URL = "PASTE_URL_WEB_APP_GOOGLE_APPS_SCRIPT_DI_SINI";
+
+    document.getElementById('oprecForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('btnSubmit');
+      const msg = document.getElementById('statusMessage');
+      
+      btn.disabled = true;
+      btn.innerText = "Mengirim...";
+      msg.classList.add('hidden');
+
+      const formData = {
+        action: "upsert_data",
+        sheet: "Data",
+        keyColumn: "ID",
+        data: {
+          ID: document.getElementById('id').value,
+          Nama: document.getElementById('nama').value,
+          Peran: document.getElementById('peran').value,
+          Status: "Pendaftar Baru"
+        }
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Memakai text/plain untuk menghindari CORS pada GAS
+        body: JSON.stringify(formData)
+      })
+      .then(res => res.json())
+      .then(response => {
+        msg.innerText = "Pendaftaran Berhasil Disimpan!";
+        msg.className = "mt-4 text-center text-sm font-medium text-green-600";
+        document.getElementById('oprecForm').reset();
+      })
+      .catch(error => {
+        msg.innerText = "Gagal mengirim data: " + error.message;
+        msg.className = "mt-4 text-center text-sm font-medium text-red-600";
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.innerText = "Kirim Pendaftaran";
+        msg.classList.remove('hidden');
+      });
+    });
+  </script>
+</body>
+</html>
