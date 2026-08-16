@@ -1,0 +1,8 @@
+# OS Metadata
+.DS_Store
+Thumbs.db
+
+# Clasp / Node (jika menggunakan clasp CLI)
+.clasp.json
+node_modules/
+*.log
